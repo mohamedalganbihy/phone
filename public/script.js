@@ -1,49 +1,36 @@
-// استبدال هذا الجزء في script.js
-const { pool, initDB } = require('./db');
-
-// تهيئة قاعدة البيانات
-initDB();
-
-// دالة للحصول على جميع الأجهزة
-async function getDevices() {
-  const res = await pool.query('SELECT * FROM devices ORDER BY created_at DESC');
-  return res.rows;
+// دوال للاتصال بالخادم
+async function fetchDevices() {
+  try {
+    const response = await fetch('/api/devices');
+    if (!response.ok) throw new Error('فشل جلب البيانات');
+    return await response.json();
+  } catch (err) {
+    console.error('Error:', err);
+    showError(err.message);
+    return [];
+  }
 }
 
-// دالة لإضافة جهاز جديد
-async function addDevice(device) {
-  const query = `
-    INSERT INTO devices (
-      customer_name, customer_phone, device_type, device_brand,
-      device_problem, receipt_date, expected_delivery, status
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    RETURNING *
-  `;
-  const values = [
-    device.customerName,
-    device.customerPhone,
-    device.deviceType,
-    device.deviceBrand,
-    device.deviceProblem,
-    device.receiptDate,
-    device.expectedDelivery,
-    device.status || 'pending'
-  ];
-  const res = await pool.query(query, values);
-  return res.rows[0];
+async function addNewDevice(deviceData) {
+  try {
+    const response = await fetch('/api/devices', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(deviceData),
+    });
+    
+    if (!response.ok) throw new Error('فشل إضافة الجهاز');
+    return await response.json();
+  } catch (err) {
+    console.error('Error:', err);
+    showError(err.message);
+    throw err;
+  }
 }
 
-// تعديل دالة displayDevices لتصبح async
-async function displayDevices() {
-  const devices = await getDevices();
-  devicesTableBody.innerHTML = '';
-  
-  devices.forEach((device, index) => {
-    // ... بقية الكود كما هو
-  });
-}
-
-// تعديل event listener لإضافة جهاز
+// استخدم هذه الدوال بدلاً من الاتصال المباشر بقاعدة البيانات
 deviceForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   
@@ -57,9 +44,59 @@ deviceForm.addEventListener('submit', async (e) => {
     expectedDelivery: document.getElementById('expectedDelivery').value
   };
   
-  await addDevice(newDevice);
-  deviceForm.reset();
-  await displayDevices();
+  try {
+    await addNewDevice(newDevice);
+    deviceForm.reset();
+    await refreshDeviceList();
+    showSuccess('تم إضافة الجهاز بنجاح');
+  } catch (err) {
+    console.error('Error:', err);
+  }
 });
 
-// ... تعديل باقي الدوال بنفس الطريقة
+// دوال مساعدة
+function showError(message) {
+  alert(`خطأ: ${message}`);
+}
+
+function showSuccess(message) {
+  alert(`نجاح: ${message}`);
+}
+
+async function refreshDeviceList() {
+  const devices = await fetchDevices();
+  renderDevices(devices);
+}
+
+function renderDevices(devices) {
+  devicesTableBody.innerHTML = '';
+  
+  devices.forEach((device, index) => {
+    const row = document.createElement('tr');
+    
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${device.customer_name}</td>
+      <td>${device.customer_phone}</td>
+      <td>${device.device_type}</td>
+      <td>${device.device_brand}</td>
+      <td>${device.device_problem}</td>
+      <td>${new Date(device.receipt_date).toLocaleDateString()}</td>
+      <td>${new Date(device.expected_delivery).toLocaleDateString()}</td>
+      <td><span class="status status-${device.status}">${getStatusText(device.status)}</span></td>
+      <td>
+        <button class="action-btn edit-btn" data-id="${device.id}"><i class="fas fa-edit"></i></button>
+        <button class="action-btn delete-btn" data-id="${device.id}"><i class="fas fa-trash"></i></button>
+        ${device.status !== 'completed' && device.status !== 'delivered' ? 
+          `<button class="action-btn complete-btn" data-id="${device.id}"><i class="fas fa-check"></i></button>` : ''}
+      </td>
+    `;
+    
+    devicesTableBody.appendChild(row);
+  });
+}
+
+// التهيئة الأولية
+document.addEventListener('DOMContentLoaded', async () => {
+  await refreshDeviceList();
+});
