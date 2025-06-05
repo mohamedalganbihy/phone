@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تتبع أجهزة الصيانة</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-tools"></i> نظام تتبع أجهزة الصيانة</h1>
+    </header>
+
+    <main>
+        <section class="device-form">
+            <h2>إضافة جهاز جديد</h2>
+            <form id="deviceForm">
+                <div class="form-group">
+                    <label for="customerName">اسم العميل:</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">رقم الهاتف:</label>
+                    <input type="tel" id="customerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="deviceType">نوع الجهاز:</label>
+                    <select id="deviceType" required>
+                        <option value="">اختر نوع الجهاز</option>
+                        <option value="موبايل">موبايل</option>
+                        <option value="لابتوب">لابتوب</option>
+                        <option value="كمبيوتر">كمبيوتر</option>
+                        <option value="تابلت">تابلت</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="deviceBrand">ماركة الجهاز:</label>
+                    <input type="text" id="deviceBrand" required>
+                </div>
+                <div class="form-group">
+                    <label for="deviceProblem">العطل:</label>
+                    <textarea id="deviceProblem" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="receiptDate">تاريخ الاستلام:</label>
+                    <input type="date" id="receiptDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expectedDelivery">موعد التسليم المتوقع:</label>
+                    <input type="date" id="expectedDelivery" required>
+                </div>
+                <button type="submit" class="btn">حفظ الجهاز <i class="fas fa-save"></i></button>
+            </form>
+        </section>
+
+        <section class="device-list">
+            <h2>قائمة الأجهزة</h2>
+            <div class="search-filter">
+                <input type="text" id="searchInput" placeholder="ابحث باسم العميل أو نوع الجهاز...">
+                <select id="statusFilter">
+                    <option value="all">جميع الحالات</option>
+                    <option value="pending">قيد الإصلاح</option>
+                    <option value="completed">تم الإصلاح</option>
+                    <option value="delivered">تم التسليم</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table id="devicesTable">
+                    <thead>
+                        <tr>
+                            <th>رقم</th>
+                            <th>اسم العميل</th>
+                            <th>الهاتف</th>
+                            <th>نوع الجهاز</th>
+                            <th>ماركة</th>
+                            <th>العطل</th>
+                            <th>تاريخ الاستلام</th>
+                            <th>موعد التسليم</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="devicesTableBody">
+                        <!-- يتم ملؤها بالبيانات -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>نظام إدارة محلات الصيانة &copy; 2023</p>
+    </footer>
+
+    <!-- نموذج التعديل -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>تعديل بيانات الجهاز</h2>
+            <form id="editDeviceForm">
+                <input type="hidden" id="editDeviceId">
+                <div class="form-group">
+                    <label for="editCustomerName">اسم العميل:</label>
+                    <input type="text" id="editCustomerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCustomerPhone">رقم الهاتف:</label>
+                    <input type="tel" id="editCustomerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDeviceType">نوع الجهاز:</label>
+                    <select id="editDeviceType" required>
+                        <option value="موبايل">موبايل</option>
+                        <option value="لابتوب">لابتوب</option>
+                        <option value="كمبيوتر">كمبيوتر</option>
+                        <option value="تابلت">تابلت</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDeviceBrand">ماركة الجهاز:</label>
+                    <input type="text" id="editDeviceBrand" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDeviceProblem">العطل:</label>
+                    <textarea id="editDeviceProblem" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editReceiptDate">تاريخ الاستلام:</label>
+                    <input type="date" id="editReceiptDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editExpectedDelivery">موعد التسليم المتوقع:</label>
+                    <input type="date" id="editExpectedDelivery" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">الحالة:</label>
+                    <select id="editStatus" required>
+                        <option value="pending">قيد الإصلاح</option>
+                        <option value="completed">تم الإصلاح</option>
+                        <option value="delivered">تم التسليم</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">حفظ التعديلات <i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
