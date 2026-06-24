@@ -1,136 +1,91 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة المحل - اللوحة الرئيسية</title>
+    <title>اللوحة الرئيسية - الإحصائيات العامّة</title>
     <link rel="stylesheet" href="style.css">
-    <!-- مكتبة FontAwesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- القائمة الجانبية الثابتة -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fa-solid fa-shop"></i> لوحة التحكم</h3>
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-bolt"></i> نظام المحل الموحد</h3>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="index.html"><i class="fa-solid fa-chart-pie"></i> الإحصائيات العامة</a></li>
+            <li><a href="repairs.html"><i class="fa-solid fa-screwdriver-wrench"></i> قسم الصيانة</a></li>
+            <li><a href="inventory.html"><i class="fa-solid fa-warehouse"></i> إدارة المخزن</a></li>
+            <li><a href="sales.html"><i class="fa-solid fa-cash-register"></i> المبيعات والخدمات</a></li>
+        </ul>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <header class="top-header">
+            <button class="toggle-btn" id="toggleSidebar"><i class="fa-solid fa-bars"></i></button>
+            <h2>نظرة عامة على نشاط المحل اليوم</h2>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-info"><h3 id="pending-repairs">0</h3><p>أجهزة قيد الصيانة حالياً</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
             </div>
-            <ul class="nav-links">
-                <li class="active"><a href="index.html"><i class="fa-solid fa-chart-line"></i> الإحصائيات</a></li>
-                <li><a href="repairs.html"><i class="fa-solid fa-wrench"></i> الصيانة</a></li>
-                <li><a href="inventory.html"><i class="fa-solid fa-boxes-stacked"></i> المخزن</a></li>
-                <li><a href="sales.html"><i class="fa-solid fa-cart-shopping"></i> المبيعات</a></li>
-            </ul>
-        </aside>
+            <div class="stat-card green">
+                <div class="stat-info"><h3 id="completed-repairs">0</h3><p>أجهزة تم تسليمها بنجاح</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-info"><h3 id="low-stock">0</h3><p>نواقص في المخزن (أقل من 3 قطع)</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-info"><h3 id="today-sales">0 ج.م</h3><p>مبيعات وإيرادات اليوم</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+        </section>
+    </main>
 
-        <!-- المحتوى الرئيسي -->
-        <main class="main-content">
-            <header class="top-header">
-                <button class="toggle-btn" id="toggleSidebar"><i class="fa-solid fa-bars"></i></button>
-                <h2>الإحصائيات العامة للمحل</h2>
-            </header>
-
-            <!-- بطاقات الإحصائيات -->
-            <section class="stats-grid">
-                <div class="stat-card blue">
-                    <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
-                    <div class="stat-info">
-                        <h3 id="pending-repairs">0</h3>
-                        <p>أجهزة قيد الصيانة</p>
-                    </div>
-                </div>
-
-                <div class="stat-card green">
-                    <div class="stat-icon"><i class="fa-solid fa-check-double"></i></div>
-                    <div class="stat-info">
-                        <h3 id="completed-repairs">0</h3>
-                        <p>أجهزة تم تسليمها</p>
-                    </div>
-                </div>
-
-                <div class="stat-card orange">
-                    <div class="stat-icon"><i class="fa-solid fa-box"></i></div>
-                    <div class="stat-info">
-                        <h3 id="low-stock">0</h3>
-                        <p>نواقص المخزن (أقل من 3)</p>
-                    </div>
-                </div>
-
-                <div class="stat-card purple">
-                    <div class="stat-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
-                    <div class="stat-info">
-                        <h3 id="today-sales">0 ج.م</h3>
-                        <p>أرباح ومبيعات اليوم</p>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- كود الجافاسكريبت لجلب الإحصائيات وتحريك القائمة -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { db, ref, onValue } from "./firebase-config.js";
 
-        // ضع هنا بيانات الفايربيز الخاصة بك (Firebase Configuration)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // --- 1. تشغيل وتحريك القائمة الجانبية ---
+        // تشغيل القائمة الجانبية للموبايل
         const sidebar = document.getElementById('sidebar');
-        const toggleSidebar = document.getElementById('toggleSidebar');
-        toggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
+        document.getElementById('toggleSidebar').addEventListener('click', () => sidebar.classList.toggle('active'));
 
-        // --- 2. جلب حسابات الإحصائيات من Firebase تلقائياً ---
-        
-        // أ. إحصائيات الصيانة
+        // حساب إحصائيات الصيانة
         onValue(ref(db, 'repairs'), (snapshot) => {
-            let pending = 0;
-            let completed = 0;
-            snapshot.forEach((childSnapshot) => {
-                const repair = childSnapshot.val();
-                if(repair.status === 'قيد الانتظار' || repair.status === 'جاري العمل') pending++;
-                if(repair.status === 'تم التسليم') completed++;
+            let pending = 0, completed = 0;
+            snapshot.forEach((child) => {
+                const val = child.val();
+                if(val.status === 'قيد الانتظار' || val.status === 'جاري العمل') pending++;
+                if(val.status === 'تم التسليم') completed++;
             });
             document.getElementById('pending-repairs').innerText = pending;
             document.getElementById('completed-repairs').innerText = completed;
         });
 
-        // ب. إحصائيات المخزن والنواقص
+        // حساب نواقص المخزن
         onValue(ref(db, 'inventory'), (snapshot) => {
-            let lowStockCount = 0;
-            snapshot.forEach((childSnapshot) => {
-                const item = childSnapshot.val();
-                if(parseInt(item.quantity) <= 3) lowStockCount++; // تنبيه لو الكمية 3 أو أقل
+            let low = 0;
+            snapshot.forEach((child) => {
+                if(parseInt(child.val().quantity || 0) <= 3) low++;
             });
-            document.getElementById('low-stock').innerText = lowStockCount;
+            document.getElementById('low-stock').innerText = low;
         });
 
-        // ج. إحصائيات مبيعات اليوم
+        // حساب مبيعات اليوم
         onValue(ref(db, 'sales'), (snapshot) => {
-            let todayTotal = 0;
-            const todayStr = new Date().toISOString().split('T')[0]; // تاريخ اليوم الحالي YYYY-MM-DD
-            
-            snapshot.forEach((childSnapshot) => {
-                const sale = childSnapshot.val();
-                if(sale.date === todayStr) {
-                    todayTotal += parseFloat(sale.totalPrice || 0);
-                }
+            let total = 0;
+            const today = new Date().toISOString().split('T')[0];
+            snapshot.forEach((child) => {
+                const sale = child.val();
+                if(sale.date === today) total += parseFloat(sale.amount || 0);
             });
-            document.getElementById('today-sales').innerText = todayTotal + " ج.م";
+            document.getElementById('today-sales').innerText = total + " ج.م";
         });
     </script>
 </body>
