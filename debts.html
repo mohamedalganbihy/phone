@@ -1,0 +1,98 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الديون والحسابات</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg-body: #0a0e17; --card-bg: #1a1d24; --border-color: #2a2e38; --text-light: #eef2ff; }
+        body { background-color: var(--bg-body); color: var(--text-light); font-family: 'Segoe UI', system-ui; }
+        .brand-header { background: linear-gradient(135deg, #e74c3c 0%, #ff7675 100%); color: white; padding: 15px; border-radius: 0 0 20px 20px; }
+        .custom-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 20px; }
+        .table-custom { color: var(--text-light); }
+        .nav-link-custom { color: var(--text-light); padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .nav-link-custom:hover, .nav-link-custom.active { background-color: #e74c3c; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="brand-header d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu"><i class="fas fa-bars"></i></button>
+            <h4 class="m-0 fw-bold"><i class="fas fa-money-bill-wave me-2"></i> دفتر الديون والحسابات</h4>
+        </div>
+        <a href="index.html" class="btn btn-dark btn-sm"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="custom-card">
+                <h5 class="fw-bold mb-3">تسجيل دين جديد</h5>
+                <form id="debtForm">
+                    <input type="text" id="debtUser" class="form-control mb-2 bg-dark text-light border-secondary" placeholder="اسم العميل" required>
+                    <input type="number" id="debtAmount" class="form-control mb-2 bg-dark text-light border-secondary" placeholder="المبلغ (ج.م)" required>
+                    <button type="submit" class="btn btn-danger w-100">إضافة للدفتر</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="custom-card">
+                <h5 class="fw-bold mb-3">العملاء المسجلين بالدفتر</h5>
+                <table class="table table-custom">
+                    <thead><tr><th>العميل</th><th>المبلغ</th><th>إجراء</th></tr></thead>
+                    <tbody id="debtsTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="sidebarMenu" style="width: 280px;">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title fw-bold text-danger"><i class="fas fa-th-large me-2"></i> قوائم النظام</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column gap-2 p-3">
+        <a href="index.html" class="nav-link-custom"><i class="fas fa-chart-line"></i> لوحة الإحصائيات العامة</a>
+        <a href="debts.html" class="nav-link-custom active"><i class="fas fa-money-bill-wave"></i> إدارة الديون والحسابات</a>
+        <a href="orders.html" class="nav-link-custom"><i class="fas fa-shopping-cart"></i> دفتر النواقص والطلبيات</a>
+        <a href="inventory.html" class="nav-link-custom"><i class="fas fa-barcode"></i> المخزن والمبيعات</a>
+        <a href="tasks.html" class="nav-link-custom"><i class="fas fa-tools"></i> إدارة المهام والتركيبات</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const API_URL = "https://ganbihi-sys-default-rtdb.firebaseio.com/debts_data/debts.json";
+
+    document.getElementById('debtForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const user = document.getElementById('debtUser').value;
+        const amount = document.getElementById('debtAmount').value;
+        await fetch(API_URL, { method: 'POST', body: JSON.stringify({ user, amount }) });
+        document.getElementById('debtForm').reset();
+        loadDebts();
+    });
+
+    async function loadDebts() {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const tbody = document.getElementById('debtsTable');
+        tbody.innerHTML = "";
+        if(data) {
+            Object.keys(data).forEach(key => {
+                tbody.innerHTML += `<tr><td>${data[key].user}</td><td class="text-danger fw-bold">${data[key].amount} ج.م</td><td><button class="btn btn-sm btn-outline-success" onclick="deleteDebt('${key}')">تم السداد</button></td></tr>`;
+            });
+        }
+    }
+    async function deleteDebt(key) {
+        await fetch(`https://ganbihi-sys-default-rtdb.firebaseio.com/debts_data/debts/${key}.json`, { method: 'DELETE' });
+        loadDebts();
+    }
+    loadDebts();
+</script>
+</body>
+</html>

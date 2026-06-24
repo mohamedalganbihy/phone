@@ -1,92 +1,94 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اللوحة الرئيسية - الإحصائيات العامّة</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>سنترال محمد الجنبيهي - اللوحة الرئيسية</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #0d6efd; --bg-body: #0a0e17; --card-bg: #1a1d24; --border-color: #2a2e38; --text-light: #eef2ff; }
+        body { background-color: var(--bg-body); font-family: 'Segoe UI', system-ui; padding-bottom: 50px; color: var(--text-light); }
+        .brand-header { background: linear-gradient(135deg, #0d6efd 0%, #00cec9 100%); color: white; padding: 15px; border-radius: 0 0 20px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .stat-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 20px; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon { font-size: 2.5rem; opacity: 0.8; }
+        .nav-link-custom { color: var(--text-light); padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 15px; text-decoration: none; transition: 0.2s; }
+        .nav-link-custom:hover, .nav-link-custom.active { background-color: var(--primary-color); color: white; }
+    </style>
 </head>
 <body>
 
-    <!-- القائمة الجانبية -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3><i class="fa-solid fa-bolt"></i> نظام المحل الموحد</h3>
+<div class="container-fluid">
+    <div class="brand-header d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu"><i class="fas fa-bars"></i></button>
+            <h4 class="m-0 fw-bold"><i class="fas fa-chart-pie me-2"></i> لوحة التحكم والإحصائيات</h4>
         </div>
-        <ul class="nav-links">
-            <li class="active"><a href="index.html"><i class="fa-solid fa-chart-pie"></i> الإحصائيات العامة</a></li>
-            <li><a href="repairs.html"><i class="fa-solid fa-screwdriver-wrench"></i> قسم الصيانة</a></li>
-            <li><a href="inventory.html"><i class="fa-solid fa-warehouse"></i> إدارة المخزن</a></li>
-            <li><a href="sales.html"><i class="fa-solid fa-cash-register"></i> المبيعات والخدمات</a></li>
-        </ul>
-    </aside>
+        <span class="badge bg-dark px-3 py-2 fs-6">سنترال محمد الجنبيهي</span>
+    </div>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="main-content">
-        <header class="top-header">
-            <button class="toggle-btn" id="toggleSidebar"><i class="fa-solid fa-bars"></i></button>
-            <h2>نظرة عامة على نشاط المحل اليوم</h2>
-        </header>
-
-        <section class="stats-grid">
-            <div class="stat-card blue">
-                <div class="stat-info"><h3 id="pending-repairs">0</h3><p>أجهزة قيد الصيانة حالياً</p></div>
-                <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div><h3 class="fw-bold text-warning" id="count-repairs">0</h3><p class="text-muted m-0 fs-6">أجهزة قيد الصيانة</p></div>
+                <div class="stat-icon text-warning"><i class="fas fa-tools"></i></div>
             </div>
-            <div class="stat-card green">
-                <div class="stat-info"><h3 id="completed-repairs">0</h3><p>أجهزة تم تسليمها بنجاح</p></div>
-                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div><h3 class="fw-bold text-info" id="count-orders">0</h3><p class="text-muted m-0 fs-6">طلبيات ونواقص</p></div>
+                <div class="stat-icon text-info"><i class="fas fa-shopping-basket"></i></div>
             </div>
-            <div class="stat-card orange">
-                <div class="stat-info"><h3 id="low-stock">0</h3><p>نواقص في المخزن (أقل من 3 قطع)</p></div>
-                <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div><h3 class="fw-bold text-danger" id="sum-debts">0 ج.م</h3><p class="text-muted m-0 fs-6">إجمالي الديون</p></div>
+                <div class="stat-icon text-danger"><i class="fas fa-file-invoice-dollar"></i></div>
             </div>
-            <div class="stat-card purple">
-                <div class="stat-info"><h3 id="today-sales">0 ج.م</h3><p>مبيعات وإيرادات اليوم</p></div>
-                <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card d-flex justify-content-between align-items-center">
+                <div><h3 class="fw-bold text-success" id="count-inventory">0</h3><p class="text-muted m-0 fs-6">أصناف المخزن</p></div>
+                <div class="stat-icon text-success"><i class="fas fa-boxes"></i></div>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
+</div>
 
-    <script type="module">
-        import { db, ref, onValue } from "./firebase-config.js";
+<div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="sidebarMenu" style="width: 280px;">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title fw-bold text-primary"><i class="fas fa-th-large me-2"></i> قوائم النظام</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column gap-2 p-3">
+        <a href="index.html" class="nav-link-custom active"><i class="fas fa-chart-line"></i> لوحة الإحصائيات العامة</a>
+        <a href="debts.html" class="nav-link-custom"><i class="fas fa-money-bill-wave"></i> إدارة الديون والحسابات</a>
+        <a href="orders.html" class="nav-link-custom"><i class="fas fa-shopping-cart"></i> دفتر النواقص والطلبيات</a>
+        <a href="inventory.html" class="nav-link-custom"><i class="fas fa-barcode"></i> المخزن والمبيعات</a>
+        <a href="tasks.html" class="nav-link-custom"><i class="fas fa-tools"></i> إدارة المهام والتركيبات</a>
+    </div>
+</div>
 
-        // تشغيل القائمة الجانبية للموبايل
-        const sidebar = document.getElementById('sidebar');
-        document.getElementById('toggleSidebar').addEventListener('click', () => sidebar.classList.toggle('active'));
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const API_BASE = "https://ganbihi-sys-default-rtdb.firebaseio.com/";
+    async function api(path) { try { const res = await fetch(`${API_BASE}${path}.json`); return await res.json(); } catch(e) { return null; } }
+    
+    async function loadStats() {
+        const devices = await api("data/devices");
+        if(devices) document.getElementById('count-repairs').innerText = Object.values(devices).filter(d => d.status !== 'تم التسليم').length;
 
-        // حساب إحصائيات الصيانة
-        onValue(ref(db, 'repairs'), (snapshot) => {
-            let pending = 0, completed = 0;
-            snapshot.forEach((child) => {
-                const val = child.val();
-                if(val.status === 'قيد الانتظار' || val.status === 'جاري العمل') pending++;
-                if(val.status === 'تم التسليم') completed++;
-            });
-            document.getElementById('pending-repairs').innerText = pending;
-            document.getElementById('completed-repairs').innerText = completed;
-        });
+        const orders = await api("orders_data/orders");
+        if(orders) document.getElementById('count-orders').innerText = Object.values(orders).filter(o => o.status !== 'تم التوفير').length;
 
-        // حساب نواقص المخزن
-        onValue(ref(db, 'inventory'), (snapshot) => {
-            let low = 0;
-            snapshot.forEach((child) => {
-                if(parseInt(child.val().quantity || 0) <= 3) low++;
-            });
-            document.getElementById('low-stock').innerText = low;
-        });
+        const debts = await api("debts_data/debts");
+        if(debts) document.getElementById('sum-debts').innerText = Object.values(debts).reduce((sum, d) => sum + Number(d.amount || 0), 0) + " ج.م";
 
-        // حساب مبيعات اليوم
-        onValue(ref(db, 'sales'), (snapshot) => {
-            let total = 0;
-            const today = new Date().toISOString().split('T')[0];
-            snapshot.forEach((child) => {
-                const sale = child.val();
-                if(sale.date === today) total += parseFloat(sale.amount || 0);
-            });
-            document.getElementById('today-sales').innerText = total + " ج.م";
-        });
-    </script>
+        const inventory = await api("inventory_data/inventory");
+        if(inventory) document.getElementById('count-inventory').innerText = Object.keys(inventory).length;
+    }
+    loadStats();
+</script>
 </body>
 </html>
